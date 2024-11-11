@@ -4,15 +4,15 @@ import sys
 background = input("Light or Dark-mode").lower()
 # Pygame initialisieren
 pygame.init()
-background_color = (0, 0, 0)
+background_color = ()
 # Bildschirm erstellen
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Bewegung eines Objekts")
 
 if background == "light" or 1:
-    background_color = (255, 255, 255)
+    background_color = [255, 255, 255]
 if background == "dark" or 2:
-    background_color = (0, 0, 0)
+    background_color = [0, 0, 0]
 
 rot = (255, 0, 0)
 # Startposition des Objekts
@@ -49,4 +49,4 @@ while True:
     pygame.display.flip()
 
     # Frame-Rate begrenzen
-    clock.tick(60)  # 60 FPS
+    clock.tick(30)  # 30 FPS
