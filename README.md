@@ -1,1 +1,1 @@
-This is my Projekt for Hack Club enyoy
+This is my Projekt for Hack Club enjoy
