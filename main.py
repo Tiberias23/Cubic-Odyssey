@@ -85,7 +85,7 @@ while True:
     player.update(walls)
 
     # Bildschirm zeichnen
-    screen.fill((30, 30, 30))
+    screen.fill(colors["background"])
     walls.draw(screen)
     player_group.draw(screen)
 
