@@ -3,10 +3,9 @@ import sys
 
 # Pygame initialisieren
 pygame.init()
-
 # Bildschirm erstellen
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Bewegung eines Objekts")
+screen = pygame.display.set_mode((800, 800))
+pygame.display.set_caption("Cubic Odyssey")
 # Farben für Light- und Dark-Mode
 light_mode_colors = {
     "background": (255, 255, 255),  # Weiß
@@ -30,7 +29,7 @@ colors = dark_mode_colors  # Aktuelles Farbschema ist Light-Mode
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((50, 50))
+        self.image = pygame.Surface((10, 10))
         self.image.fill((0, 255, 0))  # Grün für Spieler
         self.rect = self.image.get_rect(center=(100, 100))
         self.speed = 5
@@ -61,7 +60,7 @@ class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.image = pygame.Surface((width, height))
-        self.image.fill((255, 0, 0))  # Rot für Wände
+        self.image.fill(colors["object"])  # Rot für Wände
         self.rect = self.image.get_rect(topleft=(x, y))
 
 
@@ -73,7 +72,10 @@ player = Player()
 player_group = pygame.sprite.GroupSingle(player)
 
 walls = pygame.sprite.Group()
-walls.add(Wall(200, 150, 10, 300))  # Beispielwand
+walls.add(Wall(100, 100, 15, 420))  # Wand Links
+walls.add(Wall(540, 100, 15, 420))  # Wand Rechts
+walls.add(Wall(115, 100, 425, 15))  # Wand Oben
+walls.add(Wall(115, 505, 425, 15))  # Wand Unten
 
 # Hauptschleife
 clock = pygame.time.Clock()
