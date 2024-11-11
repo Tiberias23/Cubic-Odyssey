@@ -77,6 +77,7 @@ walls.add(Wall(540, 100, 15, 420))  # Wand Rechts
 walls.add(Wall(115, 100, 425, 15))  # Wand Oben
 walls.add(Wall(115, 505, 425, 15))  # Wand Unten
 
+keys = pygame.key.get_pressed()
 # Hauptschleife
 clock = pygame.time.Clock()
 while True:
@@ -86,6 +87,10 @@ while True:
             pygame.quit()
             sys.exit()
 
+    if keys[pygame.K_l]:
+        current_mode = "light"
+    if keys[pygame.K_d]:
+        current_mode = "dark"
     # Spieler-Update mit Kollisionsprüfung
     player.update(walls)
 
