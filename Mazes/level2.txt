@@ -1,7 +1,5 @@
- #this is file 2
+#this is file 2
 WWWWWWWWWWWWWWWWWWWWW
-W.W.W.W.W.W.W.W.W.WFW
-W...................W
 W.W.W.W.W.W.W.W.W.W.W
 W...................W
 W.W.W.W.W.W.W.W.W.W.W
@@ -9,6 +7,8 @@ W...................W
 W.W.W.W.W.W.W.W.W.W.W
 W...................W
 W.W.W.W.W.W.W.W.W.W.W
+W...................W
+W.W.W.W.WFW.W.W.W.W.W
 W...................W
 W.W.W.W.W.W.W.W.W.W.W
 W...................W
