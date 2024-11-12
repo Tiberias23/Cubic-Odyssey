@@ -1,11 +1,12 @@
 import pygame
 import sys
+import os
 
 # Pygame initialisieren
 pygame.init()
+
 # Bildschirm erstellen
 screen = pygame.display.set_mode((1000, 900))
-
 pygame.display.set_caption("Cubic Odyssey")
 
 # Farben für Light- und Dark-Mode
@@ -21,7 +22,7 @@ current_mode = "dark"
 colors = dark_mode_colors  # Aktuelles Farbschema ist dark-Mode
 
 
-# Spielerklasse
+# Spieler klasse
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -126,9 +127,35 @@ def create_level(layout):
     return wall_group, player_position, finish_group
 
 
-# Level aus Datei laden und Wände erstellen
-level_layout = load_level("C:\\Users\\tiber\\PycharmProjects\\Cubic-Odyssey\\Mazes\\level.txt")
+# Funktion, um alle Level-Dateien im 'Mazes' Ordner zu finden
+def load_level_files(level_dir="C:\\Users\\tiber\\PycharmProjects\\Cubic-Odyssey\\Mazes"):
+    level_files = []
+    for filename in os.listdir(level_dir):
+        if filename.endswith(".txt"):  # Nur .txt Dateien werden als Level akzeptiert
+            level_files.append(os.path.join(level_dir, filename))
+    return level_files
 
+
+# Funktion, um das nächste Level zu laden
+def load_next_level(level_index, level_files):
+    if level_index < len(level_files):
+        return load_level(level_files[level_index])
+    else:
+        return None
+
+
+# Lade alle Level-Dateien aus dem 'Mazes' Ordner
+level_files = load_level_files()
+
+# Wenn keine Level-Dateien vorhanden sind, beende das Spiel
+if not level_files:
+    print("Keine Level-Dateien gefunden! Bitte fügen Sie Level-Dateien in den 'Mazes' Ordner ein.")
+    pygame.quit()
+    sys.exit()
+
+# Startlevel laden
+current_level_index = 0
+level_layout = load_next_level(current_level_index, level_files)
 walls, player_start_pos, finish_group = create_level(level_layout)
 
 # Spieler an der definierten Startposition erstellen
@@ -153,7 +180,29 @@ while True:
     # Überprüfen, ob der Spieler das Ziel erreicht hat
     if pygame.sprite.spritecollideany(player, finish_group):
         print("Ziel erreicht!")
-        finish_group.empty()  # Entfernt das Ziel vom Bildschirm
+        current_level_index += 1  # Nächstes Level
+        level_layout = load_next_level(current_level_index, level_files)
+
+        if level_layout:  # Wenn ein neues Level existiert
+            walls, player_start_pos, finish_group = create_level(level_layout)
+            player.rect.center = player_start_pos  # Spieler an die neue Startposition setzen
+        else:
+            screen.fill(colors["background"])
+            text = ("That was the last level if you want more you can\n"
+                    "make them yourself all for that you find in the Readme")
+
+            # Text in mehrere Zeilen aufteilen
+            lines = text.split("\n")
+
+            # Jede Zeile separat rendern und anzeigen
+            for i, line in enumerate(lines):
+                line_text = font.render(line, True, colors["text"])
+                screen.blit(line_text, (100, 400 + i * 50))  # 50 Pixel Abstand zwischen den Zeilen
+            pygame.display.flip()  # Bildschirm aktualisieren
+            pygame.time.wait(4000)  # 5 Sekunden warten, um den Text anzuzeigen
+
+            pygame.quit()  # Beende das Spiel
+            sys.exit()
 
     # Bildschirm zeichnen
     screen.fill(colors["background"])
