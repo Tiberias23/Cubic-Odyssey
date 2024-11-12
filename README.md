@@ -67,7 +67,3 @@ Feel free to modify the code and levels. Contributions to the project are welcom
 ## License
 
 This project is open-source and free to use.
-
----
-
-You can save this content as a `README.md` file in your project directory. It will provide clear instructions for players to create their own levels and navigate through the game.
