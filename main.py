@@ -13,7 +13,8 @@ dark_mode_colors = {
     "background": (30, 30, 30),  # Dunkelgrau
     "text": (255, 255, 255),  # Weiß
     "object": (0, 255, 0),  # Grün
-    "wand": (176, 174, 153)
+    "wand": (176, 174, 153),
+    "finish": (255, 0, 0),  # Rot für das Ziel
 }
 
 current_mode = "dark"
@@ -88,6 +89,15 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
 
 
+# Finish-Klasse (Ziel)
+class Finish(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.image = pygame.Surface((width, height))
+        self.image.fill(colors["finish"])  # Rote Farbe für das Ziel
+        self.rect = self.image.get_rect(topleft=(x, y))
+
+
 # Funktion, um Level-Layout aus einer Datei zu laden
 def load_level(file_name):
     with open(file_name, 'r') as f:
@@ -95,9 +105,10 @@ def load_level(file_name):
     return layout
 
 
-# Funktion, um Wände basierend auf dem Level-Layout zu erstellen
+# Funktion, um Wände und das Ziel basierend auf dem Level-Layout zu erstellen
 def create_level(layout):
     wall_group = pygame.sprite.Group()
+    finish_group = pygame.sprite.Group()
     tile_size = 40  # Größe jeder "Kachel"
     player_position = (100, 100)  # Default-Position für den Spieler
 
@@ -108,14 +119,17 @@ def create_level(layout):
                 wall_group.add(wall)
             elif col == "P":  # P steht für Spieler-Startposition
                 player_position = (x * tile_size + tile_size // 2, y * tile_size + tile_size // 2)
+            elif col == "F":  # F steht für das Ziel
+                finish = Finish(x * tile_size, y * tile_size, tile_size, tile_size)
+                finish_group.add(finish)
 
-    return wall_group, player_position
+    return wall_group, player_position, finish_group
 
 
 # Level aus Datei laden und Wände erstellen
 level_layout = load_level("C:\\Users\\tiber\\PycharmProjects\\Cubic-Odyssey\\Mazes\\level.txt")
 
-walls, player_start_pos = create_level(level_layout)
+walls, player_start_pos, finish_group = create_level(level_layout)
 
 # Spieler an der definierten Startposition erstellen
 player = Player(*player_start_pos)
@@ -136,12 +150,18 @@ while True:
     # Spieler-Update mit Kollisionsprüfung
     player.update(walls)
 
+    # Überprüfen, ob der Spieler das Ziel erreicht hat
+    if pygame.sprite.spritecollideany(player, finish_group):
+        print("Ziel erreicht!")
+        finish_group.empty()  # Entfernt das Ziel vom Bildschirm
+
     # Bildschirm zeichnen
     screen.fill(colors["background"])
     walls.draw(screen)
     player_group.draw(screen)
+    finish_group.draw(screen)  # Zeichnet das Ziel
 
-    # Text anzeigen, um den aktuellen Modus zu zeigen
+    # Text anzeigen
     mode_text = font.render(f"Try to solve This Maze", True, colors["text"])
     screen.blit(mode_text, (440, 30))
 
