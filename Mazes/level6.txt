@@ -1,8 +1,9 @@
-this is file 2
+this is file 6
 WWWWWWWWWWWWWWWWWWW
 W.................FW
 W.W.W.W.W.W.W.W.W.W.W
-W.W...............W
+W...................W
 W.W.W.W.W.W.W.W.W.W.W
+W...................W
 W.P.................W
 WWWWWWWWWWWWWWWWWWWWW

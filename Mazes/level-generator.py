@@ -18,25 +18,11 @@ for i in range(anzahl):
     with open(dateipfad, 'w') as file:
         file.write(f"""this is file {nummer}
 WWWWWWWWWWWWWWWWWWWWW
-W..................FW
+W.................F.W
 W...................W
 W...................W
 W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-W...................W
-WP..................W
+W.P.................W
 WWWWWWWWWWWWWWWWWWWWW
-        """)  # Generates a standard level file
+
+""")  # Generates a standard level file
