@@ -51,7 +51,7 @@ Place your level files in the `Mazes` directory within the project folder. The g
 - `level2.txt`
 - `level3.txt`
 
-Simply add more `.txt` files to this folder to create additional levels or use the **level-generator.py** file it will automatically make a 21 by 21 level in the right Folder with the right number
+Simply add more `.txt` files to this folder to create additional levels or use the **level-generator.py** file it will automatically make a 21 by 21 level in the right Folder
 
 ## How to Play
 
