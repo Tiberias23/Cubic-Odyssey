@@ -210,9 +210,5 @@ while True:
     player_group.draw(screen)
     finish_group.draw(screen)  # Zeichnet das Ziel
 
-    # Text anzeigen
-    mode_text = font.render(f"Try to solve This Maze", True, colors["text"])
-    screen.blit(mode_text, (440, 30))
-
     pygame.display.flip()
     clock.tick(60)
