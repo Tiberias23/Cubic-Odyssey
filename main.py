@@ -149,7 +149,7 @@ def load_next_level(level_index, level_files):
 
 
 # Ordner mit den Level-Dateien
-level_folder = "C:\\Users\\tiber\\PycharmProjects\\Cubic-Odyssey\\Mazes"  # Beispiel-Pfad
+level_folder = "Mazes"  # Beispiel-Pfad
 
 # Lade alle Level-Dateien aus dem Ordner
 level_files = load_level_files_from_directory(level_folder)
