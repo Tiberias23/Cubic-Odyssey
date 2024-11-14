@@ -7,7 +7,6 @@ import re  # Zum Extrahieren der Zahlen aus den Dateinamen
 pygame.init()
 # Bildschirm erstellen
 screen = pygame.display.set_mode((1000, 900))
-
 pygame.display.set_caption("Cubic Odyssey")
 
 # Farben für Light- und Dark-Mode
@@ -19,9 +18,16 @@ dark_mode_colors = {
     "finish": (255, 0, 0),  # Rot für das Ziel
 }
 
-current_mode = "dark"
-colors = dark_mode_colors  # Aktuelles Farbschema ist dark-Mode
+light_mode_colors = {
+    "background": (255, 255, 255),  # Weiß
+    "text": (0, 0, 0),  # Schwarz
+    "object": (0, 255, 0),  # Grün
+    "wand": (120, 120, 120),
+    "finish": (255, 0, 0),  # Rot für das Ziel
+}
 
+# Aktuelles Farbschema ist Dark-Mode
+colors = dark_mode_colors
 
 # Spielerklasse
 class Player(pygame.sprite.Sprite):
@@ -31,7 +37,10 @@ class Player(pygame.sprite.Sprite):
         self.image.fill(colors["object"])  # Grün für Spieler
         self.rect = self.image.get_rect(center=(x, y))
         self.normal_speed = 5
-        self.fast_speed = 30
+        self.fast_speed = 10
+
+    def update_color(self):
+        self.image.fill(colors["object"])  # Aktualisiert die Farbe des Spielers
 
     def move_with_collision(self, dx, dy, walls):
         """Bewegt den Spieler in kleinen Schritten und prüft nach jedem Schritt auf Kollision."""
@@ -90,6 +99,9 @@ class Wall(pygame.sprite.Sprite):
         self.image.fill(colors["wand"])  # Farbe der Wand
         self.rect = self.image.get_rect(topleft=(x, y))
 
+    def update_color(self):
+        self.image.fill(colors["wand"])  # Aktualisiert die Farbe der Wand
+
 
 # Finish-Klasse (Ziel)
 class Finish(pygame.sprite.Sprite):
@@ -98,6 +110,9 @@ class Finish(pygame.sprite.Sprite):
         self.image = pygame.Surface((width, height))
         self.image.fill(colors["finish"])  # Rote Farbe für das Ziel
         self.rect = self.image.get_rect(topleft=(x, y))
+
+    def update_color(self):
+        self.image.fill(colors["finish"])  # Aktualisiert die Farbe des Ziels
 
 
 # Funktion, um Level-Layout aus einer Datei zu laden
@@ -116,27 +131,39 @@ def create_level(layout):
 
     for y, row in enumerate(layout):
         for x, col in enumerate(row):
-            if col == "W":  # W steht für Wand
+            if col == "W":
                 wall = Wall(x * tile_size, y * tile_size, tile_size, tile_size)
                 wall_group.add(wall)
-            elif col == "P":  # P steht für Spieler-Startposition
+            elif col == "P":
                 player_position = (x * tile_size + tile_size // 2, y * tile_size + tile_size // 2)
-            elif col == "F":  # F steht für das Ziel
+            elif col == "F":
                 finish = Finish(x * tile_size, y * tile_size, tile_size, tile_size)
                 finish_group.add(finish)
 
     return wall_group, player_position, finish_group
 
 
-# Funktion zum Laden von Level-Dateien aus dem Ordner und numerische Sortierung
+# Funktion zum Umschalten des Farbmodus und Aktualisieren der Sprite-Farben
+def toggle_mode(mode):
+    global colors
+    if mode == "dark":
+        colors = dark_mode_colors
+    else:
+        colors = light_mode_colors
+
+    # Aktualisiert die Farben von Player, Wänden und Ziel
+    player.update_color()
+    for wall in walls:
+        wall.update_color()
+    for finish in finish_group:
+        finish.update_color()
+
+
+# Funktion zum Laden von Level-Dateien aus dem Ordner
 def load_level_files_from_directory(directory_path):
     # Alle .txt-Dateien im angegebenen Ordner suchen
     level_files = [f for f in os.listdir(directory_path) if f.endswith(".txt")]
-
-    # Dateien nach der Zahl im Dateinamen sortieren
-    level_files.sort(key=lambda x: int(
-        re.search(r'\d+', x).group()))  # Extrahiert die Zahl aus dem Dateinamen und sortiert numerisch
-
+    level_files.sort(key=lambda x: int(re.search(r'\d+', x).group()))
     return [os.path.join(directory_path, file) for file in level_files]
 
 
@@ -148,6 +175,10 @@ def load_next_level(level_index, level_files):
         return None, None  # Keine weiteren Level
 
 
+# Hauptschleife
+clock = pygame.time.Clock()
+current_mode = "dark"  # Aktueller Modus
+
 # Ordner mit den Level-Dateien
 level_folder = "Mazes"  # Beispiel-Pfad
 
@@ -157,10 +188,7 @@ level_files = load_level_files_from_directory(level_folder)
 # Startlevel laden
 current_level_index = 0
 level_layout, level_name = load_next_level(current_level_index, level_files)
-
-# Den Levelnamen ohne Pfad und Endung anzeigen
 level_name_without_extension = os.path.splitext(os.path.basename(level_name))[0]
-
 walls, player_start_pos, finish_group = create_level(level_layout)
 
 # Spieler an der definierten Startposition erstellen
@@ -170,8 +198,6 @@ player_group = pygame.sprite.GroupSingle(player)
 # Schriftart für Text
 font = pygame.font.SysFont(None, 48)
 
-# Hauptschleife
-clock = pygame.time.Clock()
 while True:
     # Ereignisse abfragen
     for event in pygame.event.get():
@@ -179,39 +205,26 @@ while True:
             pygame.quit()
             sys.exit()
 
+    keys = pygame.key.get_pressed()
+
+    # Farbmodus umschalten
+    if keys[pygame.K_1]:
+        current_mode = "dark"
+        toggle_mode(current_mode)
+    elif keys[pygame.K_2]:
+        current_mode = "light"
+        toggle_mode(current_mode)
+
     # Spieler-Update mit Kollisionsprüfung
     player.update(walls)
-
-    # Überprüfen, ob der Spieler das Ziel erreicht hat
-    if pygame.sprite.spritecollideany(player, finish_group):
-        print("Ziel erreicht!")
-        current_level_index += 1  # Nächstes Level
-
-        level_layout, level_name = load_next_level(current_level_index, level_files)
-
-        if level_layout:  # Wenn ein neues Level existiert
-            walls, player_start_pos, finish_group = create_level(level_layout)
-            player.rect.center = player_start_pos  # Spieler an die neue Startposition setzen
-            # Update den Levelnamen ohne Dateiendung
-            level_name_without_extension = os.path.splitext(os.path.basename(level_name))[0]
-        else:
-            print("Du hast das letzte Level erreicht!")
-            mode_text = font.render("You have reached the last level if you want to play more levels you can create "
-                                    "them yourself, instructions are in the README", True, colors["text"])
-            screen.fill(colors["background"])
-            screen.blit(mode_text, (100, 400))
-            pygame.display.flip()
-            pygame.time.wait(4000)  # Warte 4 Sekunden, bevor das Spiel beendet wird
-            pygame.quit()
-            sys.exit()
 
     # Bildschirm zeichnen
     screen.fill(colors["background"])
     walls.draw(screen)
     player_group.draw(screen)
-    finish_group.draw(screen)  # Zeichnet das Ziel
+    finish_group.draw(screen)
 
-    # Levelnamen in der oberen linken Ecke anzeigen
+    # Levelnamen anzeigen
     level_name_text = font.render(f"Level: {level_name_without_extension}", True, colors["text"])
     screen.blit(level_name_text, (10, 10))
 
