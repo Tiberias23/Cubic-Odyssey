@@ -30,6 +30,7 @@ light_mode_colors = {
 # Aktuelles Farbschema ist Dark-Mode
 colors = dark_mode_colors
 
+
 # Spielerklasse
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
