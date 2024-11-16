@@ -7,6 +7,7 @@ import re  # Zum Extrahieren der Zahlen aus den Dateinamen
 pygame.init()
 # Bildschirm erstellen
 screen = pygame.display.set_mode((1000, 900))
+
 pygame.display.set_caption("Cubic Odyssey")
 
 # Farben für Light- und Dark-Mode
@@ -131,12 +132,12 @@ def create_level(layout):
 
     for y, row in enumerate(layout):
         for x, col in enumerate(row):
-            if col == "W":
+            if col == "W":  # W steht für Wand
                 wall = Wall(x * tile_size, y * tile_size, tile_size, tile_size)
                 wall_group.add(wall)
-            elif col == "P":
+            elif col == "P":  # P steht für Spieler-Startposition
                 player_position = (x * tile_size + tile_size // 2, y * tile_size + tile_size // 2)
-            elif col == "F":
+            elif col == "F":  # F steht für das Ziel
                 finish = Finish(x * tile_size, y * tile_size, tile_size, tile_size)
                 finish_group.add(finish)
 
@@ -188,7 +189,10 @@ level_files = load_level_files_from_directory(level_folder)
 # Startlevel laden
 current_level_index = 0
 level_layout, level_name = load_next_level(current_level_index, level_files)
+
+# Den Levelnamen ohne Pfad und Endung anzeigen
 level_name_without_extension = os.path.splitext(os.path.basename(level_name))[0]
+
 walls, player_start_pos, finish_group = create_level(level_layout)
 
 # Spieler an der definierten Startposition erstellen
@@ -198,6 +202,8 @@ player_group = pygame.sprite.GroupSingle(player)
 # Schriftart für Text
 font = pygame.font.SysFont(None, 48)
 
+# Hauptschleife
+clock = pygame.time.Clock()
 while True:
     # Ereignisse abfragen
     for event in pygame.event.get():
@@ -217,12 +223,12 @@ while True:
 
     # Spieler-Update mit Kollisionsprüfung
     player.update(walls)
+
     # Überprüfen, ob der Spieler das Ziel erreicht hat
     if pygame.sprite.spritecollideany(player, finish_group):
-        print("Ziel erreicht!")  # Debug: Zeigt an, wenn das Ziel erreicht wurde
-        current_level_index += 1  # Nächstes Level laden
+        print("Ziel erreicht!")
+        current_level_index += 1  # Nächstes Level
 
-        # Neues Level laden
         level_layout, level_name = load_next_level(current_level_index, level_files)
 
         if level_layout:  # Wenn ein neues Level existiert
@@ -248,7 +254,7 @@ while True:
     player_group.draw(screen)
     finish_group.draw(screen)
 
-    # Levelnamen anzeigen
+    # Levelnamen in der oberen linken Ecke anzeigen
     level_name_text = font.render(f"Level: {level_name_without_extension}", True, colors["text"])
     screen.blit(level_name_text, (10, 10))
 
