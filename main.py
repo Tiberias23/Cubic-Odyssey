@@ -182,7 +182,7 @@ clock = pygame.time.Clock()
 current_mode = "dark"  # Aktueller Modus
 
 # Ordner mit den Level-Dateien
-level_folder = "Mazes"  # Beispiel-Pfad
+level_folder = os.path.join(os.path.dirname(__file__), "Mazes")  # Beispiel-Pfad
 
 # Lade alle Level-Dateien aus dem Ordner
 level_files = load_level_files_from_directory(level_folder)
