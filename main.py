@@ -217,6 +217,30 @@ while True:
 
     # Spieler-Update mit Kollisionsprüfung
     player.update(walls)
+    # Überprüfen, ob der Spieler das Ziel erreicht hat
+    if pygame.sprite.spritecollideany(player, finish_group):
+        print("Ziel erreicht!")  # Debug: Zeigt an, wenn das Ziel erreicht wurde
+        current_level_index += 1  # Nächstes Level laden
+
+        # Neues Level laden
+        level_layout, level_name = load_next_level(current_level_index, level_files)
+
+        if level_layout:  # Wenn ein neues Level existiert
+            walls, player_start_pos, finish_group = create_level(level_layout)
+            player.rect.center = player_start_pos  # Spieler an die neue Startposition setzen
+            # Update den Levelnamen ohne Dateiendung
+            level_name_without_extension = os.path.splitext(os.path.basename(level_name))[0]
+        else:
+            print("You have reached the last level")
+            mode_text = font.render(
+                "You have reached the last level. Create more levels yourself!", True, colors["text"]
+            )
+            screen.fill(colors["background"])
+            screen.blit(mode_text, (0, 400))
+            pygame.display.flip()
+            pygame.time.wait(4000)  # Warte 4 Sekunden, bevor das Spiel beendet wird
+            pygame.quit()
+            sys.exit()
 
     # Bildschirm zeichnen
     screen.fill(colors["background"])
